@@ -1,0 +1,178 @@
+<html>
+<head>
+  <link rel="shortcut icon" href="static/background.jpg" type="image/x-icon">
+  <style>
+    body {
+  background: url(static/background.jpg)  no-repeat center center fixed !important;
+  
+  background-size: auto 100% ;
+
+}
+
+.password-checker {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #ccc;
+  box-shadow: 0px 0px 10px rgba(7, 9, 6, 40.1);
+ 
+}
+
+
+
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #password-strength {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body >
+  <div class="password-checker">
+    <h2>Password Strength Checker</h2>
+    <form>
+      <label for="password-input">Enter your password:</label>
+      <input type="password" id="password-input" placeholder="Password">
+      <button type="submit" id="check-button">Check Password</button>
+    </form>
+    <div id="password-strength"></div>
+    <form>
+      <label for="common-password-input">Check if your password is guessable:</label>
+      <input type="password" id="common-password-input" placeholder="Password">
+      <button type="submit" id="check-common-button">Check Common Passwords</button>
+    </form>
+    
+  </div>
+  <script>
+    const passwordInput = document.getElementById('password-input');
+    const checkButton = document.getElementById('check-button');
+    const passwordStrength = document.getElementById('password-strength');
+    const commonPasswordInput = document.getElementById('common-password-input');
+    const checkCommonButton = document.getElementById('check-common-button');
+
+    checkButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      const password = passwordInput.value.trim();
+      const passwordLength = password.length;
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasLowercase = /[a-z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSymbol = /[$-/:-?{-~!"^_`\[\]]/.test(password);
+
+      let strength = 0;
+      if (passwordLength >= 8 && passwordLength <= 10) {
+        strength += 1;
+      }
+      if (passwordLength > 10 && passwordLength <= 12) {
+        strength += 2;
+      }
+      if (passwordLength > 12) {
+        strength += 3;
+      }
+      if (hasUppercase) {
+        strength += 1;
+      }
+      if (hasLowercase) {
+        strength += 1;
+      }
+      if (hasNumber) {
+        strength += 1;
+      }
+      if (hasSymbol) {
+        strength += 1;
+      }
+
+      let message;
+      switch (strength) {
+        case 0:
+          message = 'Please enter a password';
+          break;
+        case 1:
+          message ='Weak password. <a href="/passwordstips" style="text-decoration: underline;">Here\'s how you can strengthen your password.</a>';
+          break;
+        case 2:
+          message = 'Medium password';
+          break;
+        case 3:
+          message = 'Strong password';
+          break;
+        case 4:
+          message = 'Very strong password';
+          break;
+        case 5:
+          message = 'Extremely strong password';
+          break;
+        default:
+          message = 'Invalid password';
+          break;
+      }
+
+      passwordStrength.innerHTML = message;
+      passwordStrength.style.color = strength < 2 ? 'red' : 'green';
+    });
+    checkCommonButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      const password = commonPasswordInput.value.trim();
+      const isGuessable = isPasswordGuessable(password);
+      passwordStrength.innerHTML = isGuessable ? "Your password is weak or medium and can be easily guessed. Please choose a stronger password." : "Your password is strong and not guessable.";
+    });
+
+    function calculatePasswordStrength(password) {
+      const passwordLength = password.length;
+      if (passwordLength < 8) {
+        return 'weak';
+      }
+      if (passwordLength < 12) {
+        return 'medium';
+      }
+      return 'strong';
+    }
+
+    function getStrengthMessage(strength) {
+      switch (strength) {
+        case 'weak':
+          return 'Your password is weak. Please choose a stronger password.';
+        case 'medium':
+          return 'Your password is medium. Please consider choosing a stronger password.';
+        case 'strong':
+          return 'Your password is strong. Good job!';
+        default:
+          return '';
+      }
+    }
+
+    function isPasswordGuessable(password) {
+      const commonPasswords = ['123456', 'password', '123456789', '12345678', '12345', '1234567', '1234567890', 'qwerty', '123123', '111111', 'abc123', '1234567898', 'admin', 'password1', 'qwertyuiop', '654321', '555555', 'lovely', '7777777', 'welcome', '888888', 'princess', 'dragon', 'password2', 'master', 'sunshine', 'letmein', 'shadow', 'monkey', 'passw0rd', 'superman', 'michael', 'football', 'iloveyou', 'secret', 'batman', 'trustno1', 'hannah', 'whatever', 'asdfghjk'];
+      return commonPasswords.includes(password);
+    }
+  </script>
+</body>
+</html>
